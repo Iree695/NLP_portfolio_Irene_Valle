@@ -8,3 +8,4 @@ Leaves fall softly onto the ground
 The evening brings cool and fresh air
 Stars appear one by one at night
 Silence covers the land before sleep
+This is an new line.
