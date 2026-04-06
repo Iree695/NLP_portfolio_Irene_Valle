@@ -1,101 +1,112 @@
 # Smart Text Analyzer - Local LLM Application
 
-**Subject:** Procesamiento de Lenguaje Natural  
+**Subject:** Speech & Language Processing 
 **Student:** Irene Valle  
-**Date:** Abril 2026  
+**Date:** April 2026  
 **Folder:** Lab 3
 
 ## Problem Description
-I created a program called **Smart Text Analyzer** for this lab. The program lets the user to type whatever text—product reviews, article extracts, comments, etc.—and automatically get:
-- Positive, negative, or neutral sentiment analysis
-- Extracting of keywords
-- An abbreviated synopsis of the text
+For this lab, I developed a small application called **Smart Text Analyzer**. The program allows the user to enter a piece of text—such as a product review, an article excerpt, or a comment—and automatically obtain:
 
-Most importantly, it's about asking the LLM about itself as well as asking it queries. Build is a full pipeline from preprocessing through postprocessing and prompt engineering.
+- Sentiment analysis (positive, negative, or neutral)
+- Keyword extraction
+- A short summary of the text
 
-### System Design and Workflow
-The procedure entails these phases:
+The objective of the application is not only to query a local LLM, but to build a complete NLP pipeline around it. For that reason, the system includes preprocessing, prompt engineering, postprocessing, and a graphical user interface.
 
-1. The user picks the model in the Streamlit interface after input.
-2. NLTK cleans the text by lowering, punctuating, and eliminating stopwords.
-3. A well designed prompt is developed to compel the LLM to provide the answer in JSON format.
-4. **Inference**: The local model is called via Ollama.
-5. **Postprocessing**: The JSON is parsed, potential errors are handled, and the results are displayed visually.
+## System Design and Workflow
+The system follows these steps:
 
-**Flowchart of the text**
-User Input
-↓
-Preprocessing (NLTK)
-↓
-Structured Prompt
-↓
-Ollama (Local LLM)
-↓
-JSON Parsing + Postprocessing
-↓
+1. The user enters a text and selects a local model in the Streamlit interface.
+2. The text is preprocessed with NLTK by converting it to lowercase, removing punctuation, and filtering stopwords.
+3. A structured prompt is created to force the LLM to return the analysis in JSON format.
+4. The selected local model is called through Ollama.
+5. The output is postprocessed: the JSON is extracted, parsed, and the results are displayed in the interface.
+
+### Workflow Diagram
+User Input  
+↓  
+Preprocessing (NLTK)  
+↓  
+Structured Prompt  
+↓  
+Ollama (Local LLM)  
+↓  
+JSON Parsing + Postprocessing  
+↓  
 Results: Sentiment + Keywords + Summary
 
 ## Model Selection and Justification
-**Ollama** was used as the tool to run the model locally.
+**Ollama** was used to run the language model locally.
 
-The main model chosen is **`llama3.2:1b`** because:
-- It is very lightweight and fast on standard computers
-- It consumes few resources
+The main model selected was **`llama3.2:1b`** because:
+
+- It is lightweight and fast on standard computers
+- It requires relatively few computational resources
 - It is sufficient for basic English text analysis tasks
+- It allows the application to run fully locally
 
-As an alternate selection in the selector, it was also added under **"tinyllama"**.
+As an alternative option, **`tinyllama`** was also included in the model selector so the user can test another lightweight model.
 
-All processing is done locally, ensuring privacy and independent of an internet connection (after model download).
+All processing is performed locally, which improves privacy and allows the application to work without an internet connection after the models have been downloaded.
 
 ## Implementation Details
-**Tools used:**
+### Tools Used
 - Python 3
-- Streamlit → to create the graphical interface
-- Ollama (Python library)
-- NLTK → only for stopwords and basic preprocessing
-- Standard libraries: `re`, `json`, `time`
+- Streamlit, for the graphical user interface
+- Ollama (Python library), to communicate with the local LLM
+- NLTK, for stopwords and basic text preprocessing
+- Standard Python libraries: `re`, `json`, and `time`
 
-**Important decisions:**
-- The code was kept simple and readable (less than 120 lines).
-- A strict prompt was used to obtain JSON output.
-- Basic error handling and response time measurement were added.
+### Design Decisions
+- The code was kept simple and readable.
+- A strict prompt was used to request a structured JSON output.
+- Basic preprocessing was added to reduce noise before sending the text to the model.
+- Postprocessing was included to extract and parse the JSON safely.
+- Response time measurement was added to provide feedback about model speed.
 
-### Main code: `local_llm_text_analyzer.py`
-(The complete code is in the file within this folder)
+### Main Code File
+`local_llm_text_analyzer.py`
+
+The complete implementation is included in the corresponding file in this folder.
 
 ## Results and Screenshots
-The application works correctly with different types of text. Sentiment is generally accurate, keywords are relevant, and summaries are clear and concise.
-Screenshots included:
+The application works correctly with different kinds of input text. In general, the sentiment predictions are reasonable, the extracted keywords are relevant, and the generated summaries are concise and understandable.
 
-Main interface (empty)
+The report includes screenshots of:
 
-Text entered and model selected
+- The main interface before entering text
+- An example with text entered and a model selected
+- The final results displayed in the interface
 
-Complete results with tabs (Sentiment, Keywords, Summary)
+## Discussion, Limitations, and Possible Improvements
+This project was designed as a small but complete NLP system built around a local LLM. Instead of using a simple prompt-response interaction, the application integrates preprocessing, prompt engineering, JSON-based structured output, response parsing, and visual presentation of results.
 
-## Discussion, Limitations, and Improvements
-Starting with a simple Streamlit UI, I progressively integrated NLTK preprocessing, advertisement engineering to get structured JSON, response analysis, and results presentation. 
+### Limitations
+Some limitations were observed during testing:
 
-**Limits observed include:** 
- - Hallucinations sometimes result when using a tiny model (llama3.2:1b); alternatively, the JSON is not properly produced. 
- - Although lower than that of larger models, sentiment and summary precision are adequate. 
- - Response time varies greatly depending on the selected model and the size of the text. 
- 
-**Possible future enhancements:**
- - Try more robust models like `llama3.2:3b` or `llama3.1:8b`. 
- - Employ the `wordcloud` library to create a word cloud representation for keywords. - Save outcomes or put analysis history into use. 
- - Improve quick engineering to get more steady results. 
- - Include RAG in a more sophisticated course project.
+- Small local models such as `llama3.2:1b` may occasionally hallucinate or return invalid JSON
+- The quality of sentiment analysis and summarization is acceptable, but lower than with larger models
+- Response time depends on the selected model and the length of the input text
+- The preprocessing pipeline is limited to English stopwords and basic cleaning
+
+### Possible Improvements
+Some possible future improvements are:
+
+- Testing stronger local models such as `llama3.2:3b` or `llama3.1:8b`
+- Improving prompt design to obtain more stable structured outputs
+- Adding output validation or retry logic when JSON is malformed
+- Saving previous analyses or adding a history panel in the interface
+- Adding visualizations such as a keyword cloud
+- Extending the system with embeddings or retrieval for a more advanced project
 
 ## How to Run the Application
-    # 1. Install dependencies
-    pip install -r requirements.txt
-    # 2. Download the model (only the first time)
-    ollama pull llama3.2:1b
-    # 3. Run the application
-    streamlit run local_llm_text_analyzer.py
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
 
-## requirements.txt
-streamlit
-ollama
-nltk
+# 2. Download the model (only the first time)
+ollama pull llama3.2:1b
+
+# 3. Run the application
+streamlit run local_llm_text_analyzer.py
