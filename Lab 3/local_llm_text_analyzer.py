@@ -137,7 +137,7 @@ if st.button("Analyze with Ollama", type="primary", use_container_width=True):
             st.subheader("Analysis Results")
 
             # Sentiment
-            with st.expander("📊 Sentiment Analysis", expanded=True):
+            with st.expander("Sentiment Analysis", expanded=True):
                 sent = result.get("sentiment", "neutral").capitalize()
                 conf = result.get("confidence", 0.65)
 
