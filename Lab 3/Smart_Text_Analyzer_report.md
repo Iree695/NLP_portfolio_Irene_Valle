@@ -74,7 +74,9 @@ The application interface, processing pipeline, and integration with Ollama were
 
 The report includes screenshots of:
 - The main interface before entering text
+![Main interface](/Lab%203/images/main_interface.png)
 - An example with text entered and a model selected
+
 - The final results displayed in the interface
 
 ## Discussion, Limitations, and Possible Improvements
