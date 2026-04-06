@@ -41,3 +41,35 @@ def prompt_creation(cleaned_text):
     "summary" = " One or two sentence summary of the text."
     }}
 """
+    return prompt
+
+def analyze_llm(text_model):
+    "Preprocessing, with Ollama -> JSON"
+    cleaned = preprocessing_text(text)
+    prompt = prompt_creation()
+    try:
+        start_time = time.time()
+        response = ollama.chat(
+            model=model,
+            messages=[{'role': 'user', 'content': prompt}]
+        )
+        latency = time.time() - start_time
+        
+        content = response['message']['content'].strip()
+        
+        # Extract JSON from response
+        json_start = content.find('{')
+        json_end = content.rfind('}') + 1
+        if json_start != -1 and json_end > json_start:
+            json_str = content[json_start:json_end]
+            result = json.loads(json_str)
+        else:
+            result = {"error": "No JSON found"}
+        
+        result['cleaned_text'] = cleaned
+        result['latency'] = round(latency, 2)
+        return result, None
+    except json.JSONDecodeError:
+        return {"error": "JSON parse failed", "raw_response": content}, cleaned
+    except Exception as e:
+        return {"error": str(e)}, cleaned
