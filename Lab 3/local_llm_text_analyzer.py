@@ -8,48 +8,29 @@ import time
 
 # Setup of NLTK
 @st.cache_resource # Saving data
-def download_nltk_data():
-    try:
-        nltk.data.find("tokenizers/punkt")
-    except LookupError:
-        nltk.download("punkt", quiet=True)
-
-    try:
-        nltk.data.find("corpora/stopwords")
-    except LookupError:
-        nltk.download("stopwords", quiet=True)
-
-download_nltk_data()
-
-def preprocessing_text():
-    "For preprocessing: lowercase, remove punctuation and stopwords."
-    text = text.lower() # to lowercase
-    text = re.sub(r"[^a-z\s]", "", text) # remove punctuation
-    stop_words = set(stopwords.words("english"))
+def preprocess_text(text):
+    text = text.lower()
+    text = re.sub(r'[^a-z\s]', '', text)
+    stop_words = set(stopwords.words('english'))
     words = text.split()
-    cleaned = []
-    for w in words:
-        if w not in stop_words and len(w) > 2:
-            cleaned.append(w)
+    cleaned = [w for w in words if w not in stop_words and len(w) > 2]
     return " ".join(cleaned)
 
-def prompt_creation(cleaned_text):
-    "Prompt for structured JSON output"
-    prompt = f"""You are a smart text analyzer. Analyze this cleaned text:{cleaned_text}
-    Return a valid JSON in this format no extra text or explanation:
-    {{
-    "sentiment" = "positive" or "negative" or "neutral",
-    "confidence" = 0.75,
-    "keywords" = ["keyword1", "keyword2", "keyword3", "keyword4"]
-    "summary" = " One or two sentence summary of the text."
-    }}
-"""
+def create_prompt(cleaned_text):
+    prompt = f'''You are a smart text analyzer. Analyze this cleaned text: {cleaned_text}
+Return ONLY a valid JSON object, no extra text or explanation:
+{{
+  "sentiment": "positive" or "negative" or "neutral",
+  "confidence": 0.75,
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "summary": "One or two sentence summary of the text."
+}}'''
     return prompt
 
-def analyze_llm(text_model):
-    "Preprocessing, with Ollama -> JSON"
-    cleaned = preprocessing_text(text)
-    prompt = prompt_creation()
+def analyze_with_llm(text, model):
+    cleaned = preprocess_text(text)
+    prompt = create_prompt(cleaned)
+    
     try:
         start_time = time.time()
         response = ollama.chat(
@@ -57,10 +38,9 @@ def analyze_llm(text_model):
             messages=[{'role': 'user', 'content': prompt}]
         )
         latency = time.time() - start_time
-        
+
         content = response['message']['content'].strip()
-        
-        # Extract JSON from response
+
         json_start = content.find('{')
         json_end = content.rfind('}') + 1
         if json_start != -1 and json_end > json_start:
@@ -68,15 +48,12 @@ def analyze_llm(text_model):
             result = json.loads(json_str)
         else:
             result = {"error": "No JSON found"}
-        
+
         result['cleaned_text'] = cleaned
         result['latency'] = round(latency, 2)
         return result, None
-    except json.JSONDecodeError:
-        return {"error": "JSON parse failed", "raw_response": content}, cleaned
     except Exception as e:
         return {"error": str(e)}, cleaned
-    
 
 # Streamlit APP
 st.set_page_config(page_title= "Smart Text Analyzer", layout="wide")
