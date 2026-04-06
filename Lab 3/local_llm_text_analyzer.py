@@ -135,3 +135,37 @@ if st.button("Analyze with Ollama", type="primary", use_container_width=True):
             
             # Results
             st.subheader("Analysis Results")
+
+            # Sentiment
+            with st.expander("📊 Sentiment Analysis", expanded=True):
+                sent = result.get("sentiment", "neutral").capitalize()
+                conf = result.get("confidence", 0.65)
+
+                if sent == "Positive":
+                    st.success(f"Sentiment: {sent}")
+                elif sent == "Negative":
+                    st.error(f"Sentiment: {sent}")
+                else:
+                    st.warning(f"Sentiment: {sent}")
+
+                st.write(f"Confidence: {conf:.2f}")
+
+
+            # Keywords
+            with st.expander("Keywords", expanded=True):
+                keywords = result.get("keywords", ["N/A"])
+                st.write("**Extracted Keywords:**")
+                st.write(", ".join(keywords))
+                st.write("**Top Keywords List:**")
+                for i, kw in enumerate(keywords[:5], 1):
+                    st.write(f"{i}. {kw}")
+            
+            # Summary
+            with st.expander("Summary", expanded=True):
+                st.write(result.get("summary", "No summary generated."))
+            
+            st.caption(f"Processed in {result.get('latency', 'N/A')} seconds using local {selected_model}")
+    else:
+        st.warning("Please enter some text to analyze.")
+
+st.caption("Built with Streamlit + Ollama")
