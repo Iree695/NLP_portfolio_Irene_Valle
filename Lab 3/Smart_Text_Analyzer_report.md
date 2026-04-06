@@ -46,9 +46,8 @@ The main model selected was **`llama3.2:1b`** because:
 - It is sufficient for basic English text analysis tasks
 - It allows the application to run fully locally
 
-As an alternative option, **`tinyllama`** was also included in the model selector so the user can test another lightweight model.
-
-All processing is performed locally, which improves privacy and allows the application to work without an internet connection after the models have been downloaded.
+The intended model for this project is `llama3.2:1b`, executed locally through Ollama. An alternative lightweight model was considered during development, but it was not installed in the final environment. 
+Due to time and network constraints during the final setup, the download of the local model through Ollama was still in progress at submission time. However, the application code, interface, workflow, and technical design are complete and ready to run once the model is fully downloaded.
 
 ## Implementation Details
 ### Tools Used
@@ -71,10 +70,9 @@ All processing is performed locally, which improves privacy and allows the appli
 The complete implementation is included in the corresponding file in this folder.
 
 ## Results and Screenshots
-The application works correctly with different kinds of input text. In general, the sentiment predictions are reasonable, the extracted keywords are relevant, and the generated summaries are concise and understandable.
+The application interface, processing pipeline, and integration with Ollama were completed. Final runtime validation depends on the successful completion of the local model download.
 
 The report includes screenshots of:
-
 - The main interface before entering text
 - An example with text entered and a model selected
 - The final results displayed in the interface
@@ -85,6 +83,7 @@ This project was designed as a small but complete NLP system built around a loca
 ### Limitations
 Some limitations were observed during testing:
 
+- A practical limitation of local LLM deployment is the initial model download time, especially under slow network conditions.
 - Small local models such as `llama3.2:1b` may occasionally hallucinate or return invalid JSON
 - The quality of sentiment analysis and summarization is acceptable, but lower than with larger models
 - Response time depends on the selected model and the length of the input text
