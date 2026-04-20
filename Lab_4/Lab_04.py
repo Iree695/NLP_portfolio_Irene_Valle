@@ -43,24 +43,13 @@ def generate_test_audio(text, out_file="test_input.wav"):
     print(f"Test audio generated and saved as {out_path}")
     return out_path
 
-# Local Stt using Whisper:
+# Local STT using Whisper:
 def local_stt(wav_path):
     # Load audio manually to avoid FFmpeg
     audio, sr = librosa.load(wav_path, sr=16000)
 
     model = whisper.load_model("base")
-    result = model.transcribe(wav_path)
-    return result["text"]
-
-def demo_local_stt():
-    wav = generate_test_audio("turn on the light")
-    text = local_stt(wav)
-    print("Transcribed Text:", text)
-
-# Local STT using Whisper:
-def local_stt(wav_path):
-    model = whisper.load_model("base")
-    result = model.transcribe(wav_path)   # ← CORREGIDO
+    result = model.transcribe(audio)
     return result["text"]
 
 def demo_local_stt():
