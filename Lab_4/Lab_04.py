@@ -53,7 +53,7 @@ def local_stt(wav_path):
     return result["text"]
 
 def demo_local_stt():
-    wav = generate_test_audio("turn on the light")
+    wav = generate_test_audio("Please let me know the main points of the subject")
     text = local_stt(wav)
     print("Transcribed Text:", text)
 
@@ -79,16 +79,21 @@ def external_stt(wav_path):
     return result["text"]
 
 def demo_external_stt():
-    wav = generate_test_audio("what time is it?")
+    wav = generate_test_audio("What are the main ideas in the text?")
     text = external_stt(wav)
     print("Transcribed Text:", text)
 
 # External TTS:
 def external_tts(text, out_file="external_tts.wav"):
     out_path = os.path.join(AUDIO_DIR, out_file)
-    tts_pipeline = pipeline("text-to-speech", model="espnet/kan-bayashi_ljspeech_vits")
-    audio = tts_pipeline(text)
-    sf.write(out_path, audio["audio"], audio["sampling_rate"])
+    tts_pipeline = pipeline("text-to-speech", model="facebook/mms-tts-eng")
+    result = tts_pipeline(text)
+    audio = result["audio"]
+
+    if len(audio.shape) > 1:
+        audio = audio.squeeze()
+
+    sf.write(out_path, audio, result["sampling_rate"])
     print("Text-to-Speech saved as", out_path)
     return out_path
 
@@ -119,10 +124,10 @@ def demo_extra_speech_task():
     if choice == "1":
         wav = record_audio()
     elif choice == "2":
-        wav = generate_test_audio("I am very happy today")
+        wav = generate_test_audio("I am a person that has a confortable life and I am very ill and sick today")
     else:
         print("Invalid choice. Using generated test audio.")
-        wav = generate_test_audio("I am very happy today")
+        wav = generate_test_audio("I am very happy today because I have a lot of fun with my friends")
 
     results = extra_speech_task(wav)
 
