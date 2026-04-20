@@ -31,12 +31,21 @@ def demo_local_stt():
     print("Transcribed Text:", text)
 
 # Local TTS using gTTS:
-def demo_local_tts():
-    ...
+def local_tts(text, out_file="local_tts.wav"):
+    tts = gTTS(text = text, lang= "en")
+    tts.save(out_file)
+    print("Text-to-Speech saved as", out_file)
+    return out_file
 
+def demo_local_tts():
+    text = input("Enter text to convert to speech: ")
+    local_tts(text)
+
+# External STT:
 def demo_external_stt():
     ...
 
+# External TTS:
 def demo_external_tts():
     ...
 
