@@ -54,8 +54,16 @@ def demo_external_stt():
     print("Transcribed Text:", text)
 
 # External TTS:
+def external_tts(text, out_file="external_tts.wav"):
+    tts_pipeline = pipeline("text-to-speech", model="espnet/kan-bayashi_ljspeech_vits")
+    audio = tts_pipeline(text)
+    sf.write(out_file, audio["audio"], audio["sampling_rate"])
+    print("Text-to-Speech saved as", out_file)
+    return out_file
+
 def demo_external_tts():
-    ...
+    text = input("Enter text to convert to speech: ")
+    external_tts(text)
 
 def demo_extra_speech_task():
     ...
