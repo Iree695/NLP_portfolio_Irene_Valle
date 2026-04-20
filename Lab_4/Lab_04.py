@@ -147,6 +147,13 @@ def extra_speech_task(wav_path):
     results = emotion_pipeline({"raw": audio, "sampling_rate": sr}, top_k=3)
     return results
 
+EMOTION_LABELS = {
+    "ang": "Angry",
+    "hap": "Happy",
+    "neu": "Neutral",
+    "sad": "Sad"
+}
+
 def demo_extra_speech_task():
     print("Extra Speech Task: Speech Emotion Recognition")
     print("1. Record audio")
@@ -167,7 +174,8 @@ def demo_extra_speech_task():
 
     print("Detected emotions:")
     for item in results:
-        print(f"{item['label']}: {item['score']:.2f}")
+        emotion = EMOTION_LABELS.get(item["label"], item["label"])
+        print(f"{emotion}: {item['score']:.2f}")
 
 
 def main():
