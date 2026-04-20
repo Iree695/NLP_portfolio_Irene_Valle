@@ -8,10 +8,17 @@ import os                           # For file operations
 from transformers import pipeline   # For external STT and TTS models
 import librosa                      # For audio processing 
 
+# Get the directory where this script is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+AUDIO_DIR = os.path.join(BASE_DIR, "generated_audio")
+
+# Create folder if it doesn't exist
+os.makedirs(AUDIO_DIR, exist_ok=True)
+
 # Recording audio:
 SAMPLE_RATE = 16000
 CHANNELS = 1
-TEMP_WAV = "recording.wav"
+TEMP_WAV = os.path.join(AUDIO_DIR, "recording.wav")
 
 def record_audio(seconds = 4):
     print("Recording...")
@@ -23,15 +30,18 @@ def record_audio(seconds = 4):
 
 # Generation of audio files:
 def generate_test_audio(text, out_file="test_input.wav"):
+    out_path = os.path.join(AUDIO_DIR, out_file)
+    temp_mp3 = os.path.join(AUDIO_DIR, "temp.mp3")
+
     # Convert text to speech
     tts = gTTS(text=text, lang="en")
-    tts.save("temp.mp3")
+    tts.save(temp_mp3)
 
     # Convert mp3 to wav using librosa
-    audio, sr = librosa.load("temp.mp3", sr=16000)
-    sf.write(out_file, audio, 16000)
-    print(f"Test audio generated and saved as {out_file}")
-    return out_file
+    audio, sr = librosa.load(temp_mp3, sr=16000)
+    sf.write(out_path, audio, 16000)
+    print(f"Test audio generated and saved as {out_path}")
+    return out_path
 
 # Local Stt using Whisper:
 def local_stt(wav_path):
@@ -57,10 +67,11 @@ def demo_local_stt():
 
 # Local TTS using gTTS:
 def local_tts(text, out_file="local_tts.wav"):
+    out_path = os.path.join(AUDIO_DIR, out_file)
     tts = gTTS(text = text, lang= "en")
-    tts.save(out_file)
-    print("Text-to-Speech saved as", out_file)
-    return out_file
+    tts.save(out_path)
+    print("Text-to-Speech saved as", out_path)
+    return out_path
 
 def demo_local_tts():
     text = input("Enter text to convert to speech: ")
@@ -79,11 +90,12 @@ def demo_external_stt():
 
 # External TTS:
 def external_tts(text, out_file="external_tts.wav"):
+    out_path = os.path.join(AUDIO_DIR, out_file)
     tts_pipeline = pipeline("text-to-speech", model="espnet/kan-bayashi_ljspeech_vits")
     audio = tts_pipeline(text)
-    sf.write(out_file, audio["audio"], audio["sampling_rate"])
-    print("Text-to-Speech saved as", out_file)
-    return out_file
+    sf.write(out_path, audio["audio"], audio["sampling_rate"])
+    print("Text-to-Speech saved as", out_path)
+    return out_path
 
 def demo_external_tts():
     text = input("Enter text to convert to speech: ")
