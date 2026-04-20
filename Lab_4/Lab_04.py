@@ -1,10 +1,12 @@
-# Lab 4: Speech Recognition and Synthesis
-import sounddevice as sd
-import soundfile as sf
-import whisper
-from gtts import gTTS
-import os
-from transformers import pipeline
+# Lab 4
+# Libraries:
+import sounddevice as sd            # For recording audio
+import soundfile as sf              # For saving audio files
+import whisper                      # For local speech recognition
+from gtts import gTTS               # For local text-to-speech
+import os                           # For file operations
+from transformers import pipeline   # For external STT and TTS models
+import librosa                      # For audio processing 
 
 # Recording audio:
 SAMPLE_RATE = 16000
@@ -19,7 +21,18 @@ def record_audio(seconds = 4):
     print("Recording saved as", TEMP_WAV)
     return TEMP_WAV
 
-# Structures
+# Generation of audio files:
+def generate_test_audio(text, out_file="test_input.wav"):
+    # Convert text to speech
+    tts = gTTS(text=text, lang="en")
+    tts.save("temp.mp3")
+
+    # Convert mp3 to wav using librosa
+    audio, sr = librosa.load("temp.mp3", sr=16000)
+    sf.write(out_file, audio, 16000)
+    print(f"Test audio generated and saved as {out_file}")
+    return out_file
+
 # Local Stt using Whisper:
 def local_stt(wav_path):
     model = whisper.load_model("base")
@@ -27,7 +40,7 @@ def local_stt(wav_path):
     return result["text"]
 
 def demo_local_stt():
-    wav = record_audio()
+    wav = generate_test_audio("turn on the light")
     text = local_stt(wav)
     print("Transcribed Text:", text)
 
@@ -49,7 +62,7 @@ def external_stt(wav_path):
     return result["text"]
 
 def demo_external_stt():
-    wav = record_audio()
+    wav = generate_test_audio("what time is it?")
     text = external_stt(wav)
     print("Transcribed Text:", text)
 
