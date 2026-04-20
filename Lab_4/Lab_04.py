@@ -93,8 +93,40 @@ def demo_external_tts():
     text = input("Enter text to convert to speech: ")
     external_tts(text)
 
+# Extra speech task: speech emotion recognition
+def extra_speech_task(wav_path):
+    # Load audio manually to avoid FFmpeg
+    audio, sr = librosa.load(wav_path, sr=16000)
+
+    emotion_pipeline = pipeline(
+        "audio-classification",
+        model="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition",
+        device="cpu"
+    )
+
+    results = emotion_pipeline({"raw": audio, "sampling_rate": sr}, top_k=3)
+    return results
+
 def demo_extra_speech_task():
-    ...
+    print("Extra Speech Task: Speech Emotion Recognition")
+    print("1. Record audio")
+    print("2. Use generated test audio")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        wav = record_audio()
+    elif choice == "2":
+        wav = generate_test_audio("I am very happy today")
+    else:
+        print("Invalid choice. Using generated test audio.")
+        wav = generate_test_audio("I am very happy today")
+
+    results = extra_speech_task(wav)
+
+    print("Detected emotions:")
+    for item in results:
+        print(f"{item['label']}: {item['score']:.2f}")
 
 def main():
     while True:
