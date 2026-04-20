@@ -45,6 +45,9 @@ def generate_test_audio(text, out_file="test_input.wav"):
 
 # Local Stt using Whisper:
 def local_stt(wav_path):
+    # Load audio manually to avoid FFmpeg
+    audio, sr = librosa.load(wav_path, sr=16000)
+
     model = whisper.load_model("base")
     result = model.transcribe(wav_path)
     return result["text"]
