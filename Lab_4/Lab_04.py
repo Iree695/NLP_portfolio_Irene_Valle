@@ -1,7 +1,9 @@
 # Lab 4: Speech Recognition and Synthesis
 import sounddevice as sd
 import soundfile as sf
-
+import whisper
+from gtts import gTTS
+import os
 
 # Recording audio:
 SAMPLE_RATE = 16000
@@ -17,9 +19,18 @@ def record_audio(seconds = 4):
     return TEMP_WAV
 
 # Structures
-def demo_local_stt():
-    ...
+# Local Stt using Whisper:
+def local_stt(wav_path):
+    model = whisper.load_model("base")
+    result = model.trascribe(wav_path)
+    return result["text"]
 
+def demo_local_stt():
+    wav = record_audio()
+    text = local_stt(wav)
+    print("Transcribed Text:", text)
+
+# Local TTS using gTTS:
 def demo_local_tts():
     ...
 
