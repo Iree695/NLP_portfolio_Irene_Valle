@@ -4,6 +4,7 @@ import soundfile as sf
 import whisper
 from gtts import gTTS
 import os
+from transformers import pipeline
 
 # Recording audio:
 SAMPLE_RATE = 16000
@@ -42,8 +43,15 @@ def demo_local_tts():
     local_tts(text)
 
 # External STT:
+def external_stt(wav_path):
+    stt_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-small", device ="cpu")
+    result = stt_pipeline(wav_path)
+    return result["text"]
+
 def demo_external_stt():
-    ...
+    wav = record_audio()
+    text = external_stt(wav)
+    print("Transcribed Text:", text)
 
 # External TTS:
 def demo_external_tts():
