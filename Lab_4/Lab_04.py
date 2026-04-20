@@ -40,6 +40,17 @@ def record_audio(seconds = 4):
     print("Recording saved as", TEMP_WAV)
     return TEMP_WAV
 
+def play_audio(audio_path):
+    audio, sr = librosa.load(audio_path, sr=None, mono=False)
+
+    if len(audio.shape) > 1:
+        audio = audio.T
+
+    print("Playing audio...")
+    sd.play(audio, sr)
+    sd.wait()
+    print("Playback finished.")
+
 # Generation of audio files:
 def generate_test_audio(text, out_file="test_input.wav"):
     out_path = os.path.join(AUDIO_DIR, out_file)
@@ -66,20 +77,28 @@ def local_stt(wav_path):
 
 def demo_local_stt():
     wav = generate_test_audio("Please let me know the main points of the subject")
+    play_audio(wav)
     text = local_stt(wav)
     print("Transcribed Text:", text)
 
 # Local TTS using gTTS:
 def local_tts(text, out_file="local_tts.wav"):
     out_path = os.path.join(AUDIO_DIR, out_file)
+    temp_mp3 = os.path.join(AUDIO_DIR, "local_tts_temp.mp3")
+
     tts = gTTS(text = text, lang= "en")
-    tts.save(out_path)
+    tts.save(temp_mp3)
+
+    audio, sr = librosa.load(temp_mp3, sr=16000)
+    sf.write(out_path, audio, sr)
+
     print("Text-to-Speech saved as", out_path)
     return out_path
 
 def demo_local_tts():
     text = input("Enter text to convert to speech: ")
-    local_tts(text)
+    wav = local_tts(text)
+    play_audio(wav)
 
 # External STT:
 def external_stt(wav_path):
@@ -92,6 +111,7 @@ def external_stt(wav_path):
 
 def demo_external_stt():
     wav = generate_test_audio("What are the main ideas in the text?")
+    play_audio(wav)
     text = external_stt(wav)
     print("Transcribed Text:", text)
 
@@ -111,7 +131,8 @@ def external_tts(text, out_file="external_tts.wav"):
 
 def demo_external_tts():
     text = input("Enter text to convert to speech: ")
-    external_tts(text)
+    wav = external_tts(text)
+    play_audio(wav)
 
 def extra_speech_task(wav_path):
     # Load audio manually to avoid FFmpeg
@@ -141,6 +162,7 @@ def demo_extra_speech_task():
         print("Invalid choice. Using generated test audio.")
         wav = generate_test_audio("I am very happy today because I have a lot of fun with my friends")
 
+    play_audio(wav)
     results = extra_speech_task(wav)
 
     print("Detected emotions:")
