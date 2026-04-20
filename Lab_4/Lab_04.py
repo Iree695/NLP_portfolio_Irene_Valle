@@ -36,7 +36,18 @@ def generate_test_audio(text, out_file="test_input.wav"):
 # Local Stt using Whisper:
 def local_stt(wav_path):
     model = whisper.load_model("base")
-    result = model.trascribe(wav_path)
+    result = model.transcribe(wav_path)
+    return result["text"]
+
+def demo_local_stt():
+    wav = generate_test_audio("turn on the light")
+    text = local_stt(wav)
+    print("Transcribed Text:", text)
+
+# Local STT using Whisper:
+def local_stt(wav_path):
+    model = whisper.load_model("base")
+    result = model.transcribe(wav_path)   # ← CORREGIDO
     return result["text"]
 
 def demo_local_stt():
