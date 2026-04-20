@@ -1,4 +1,22 @@
+# Lab 4: Speech Recognition and Synthesis
+import sounddevice as sd
+import soundfile as sf
 
+
+# Recording audio:
+SAMPLE_RATE = 16000
+CHANNELS = 1
+TEMP_WAV = "recording.wav"
+
+def record_audio(seconds = 4):
+    print("Recording...")
+    recording = sd.rec(int(seconds * SAMPLE_RATE), samplerate=SAMPLE_RATE, channels=CHANNELS)
+    sd.wait()
+    sf.write(TEMP_WAV, recording, SAMPLE_RATE)
+    print("Recording saved as", TEMP_WAV)
+    return TEMP_WAV
+
+# Structures
 def demo_local_stt():
     ...
 
