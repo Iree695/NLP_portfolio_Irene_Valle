@@ -5,8 +5,20 @@ import soundfile as sf              # For saving audio files
 import whisper                      # For local speech recognition
 from gtts import gTTS               # For local text-to-speech
 import os                           # For file operations
+import logging                      # For reducing library messages
+import warnings                     # For reducing library warnings
+
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+warnings.filterwarnings("ignore", category=UserWarning, module="huggingface_hub.file_download")
+logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
+logging.getLogger("transformers").setLevel(logging.ERROR)
+
 from transformers import pipeline   # For external STT and TTS models
+from transformers.utils import logging as transformers_logging
 import librosa                      # For audio processing 
+
+transformers_logging.set_verbosity_error()
 
 # Get the directory where this script is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -74,7 +86,7 @@ def external_stt(wav_path):
     # Load audio manually to avoid FFmpeg
     audio, sr = librosa.load(wav_path, sr=16000)
 
-    stt_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-small", device ="cpu")
+    stt_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device ="cpu")
     result = stt_pipeline({"raw": audio, "sampling_rate": sr})
     return result["text"]
 
@@ -107,7 +119,7 @@ def extra_speech_task(wav_path):
 
     emotion_pipeline = pipeline(
         "audio-classification",
-        model="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition",
+        model="superb/wav2vec2-base-superb-er",
         device="cpu"
     )
 
@@ -164,4 +176,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
